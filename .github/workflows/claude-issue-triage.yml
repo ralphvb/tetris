@@ -1,0 +1,130 @@
+name: Claude Issue Triage
+
+# Cuando se abre o edita un issue, Claude lo analiza: le asigna labels del
+# catálogo de .github/labels.yml y publica un diagnóstico técnico en español
+# que sirve de punto de partida para el fix.
+#
+# No escribe código ni abre PRs: para eso, comenta "@claude ..." en el issue
+# (lo atiende claude.yml).
+on:
+  issues:
+    types: [opened, edited]
+
+# Si el issue se edita varias veces seguidas, cancela el análisis anterior.
+concurrency:
+  group: issue-triage-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  triage:
+    # Se salta los issues de bots, los ya cerrados y los que mencionan @claude
+    # (esos los gestiona claude.yml, que también dispara en issues abiertos).
+    if: |
+      github.event.issue.state == 'open' &&
+      github.event.issue.user.type != 'Bot' &&
+      !contains(github.event.issue.body, '@claude') &&
+      !contains(github.event.issue.title, '@claude')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Check Anthropic credentials
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "::error::Falta el secret CLAUDE_CODE_OAUTH_TOKEN. Genéralo con 'claude setup-token' y guárdalo con 'gh secret set CLAUDE_CODE_OAUTH_TOKEN'."
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Triage issue with Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Solo lectura del repo + las operaciones gh necesarias. Write está
+          # permitido únicamente para redactar el comentario en un archivo
+          # temporal; no hay Edit, ni push, ni contents: write.
+          claude_args: '--allowedTools "Read,Grep,Glob,Write,Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh label list:*),Bash(gh api:*)"'
+          prompt: |
+            Eres el triador de issues del repositorio ${{ github.repository }}: un
+            Tetris en JavaScript vanilla (HTML5 Canvas), sin build, sin bundler y
+            sin tests. Toda la lógica vive en `game.js` (~300 líneas); la vista en
+            `index.html` y `style.css`. Lee `CLAUDE.md` del checkout antes de
+            empezar: describe la arquitectura y las convenciones del proyecto.
+
+            Tu tarea sobre el issue #${{ github.event.issue.number }} es doble:
+            etiquetarlo y diagnosticarlo. NO escribas código, NO crees ramas ni
+            pull requests, y NO modifiques el título ni el cuerpo del issue
+            (editar el cuerpo re-dispararía este mismo workflow).
+
+            ## 1. Leer el issue y el código
+
+            Lee el issue con:
+                gh issue view ${{ github.event.issue.number }} --json title,body,labels,comments
+
+            Después LEE EL CÓDIGO relevante antes de opinar (`game.js`,
+            `index.html`, `style.css`). Un diagnóstico sin haber abierto los
+            archivos no sirve.
+
+            ## 2. Asignar labels
+
+            Elige SOLO de esta lista cerrada. No inventes ni crees labels nuevos;
+            si ninguno encaja, deja esa categoría vacía.
+
+            - Tipo (elige 1): `bug`, `enhancement`, `documentation`, `refactor`, `question`
+            - Área (elige 1 o 2): `gameplay`, `ui`, `controls`, `scoring`, `rendering`, `performance`
+            - Prioridad (elige 1): `prioridad-alta` (rompe el juego), `prioridad-media` (molesto, hay alternativa), `prioridad-baja` (detalle menor)
+            - Meta (opcional): `needs-info` si no hay pasos de reproducción claros; `good-first-issue` si el arreglo es pequeño y localizado
+
+            Guía de áreas: `gameplay` → `loop()`, `lockPiece()`, `collide()`,
+            `tryRotate()`; `rendering` → `draw()`, `drawBlock()`, ghost y vista
+            previa; `controls` → los handlers de teclado; `scoring` →
+            `LINE_SCORES`, nivel y `dropInterval`; `ui` → `index.html` y
+            `style.css`.
+
+            Aplícalos con:
+                gh issue edit ${{ github.event.issue.number }} --add-label "label1,label2"
+
+            Si el issue ya tenía labels de este catálogo que ya no aplican,
+            quítalos con `--remove-label`. Nunca toques labels ajenos al catálogo.
+
+            ## 3. Publicar el diagnóstico
+
+            Redacta el comentario EN ESPAÑOL, empezando exactamente con la línea
+            `<!-- claude-triage -->` y con estas secciones en este orden:
+
+            **Resumen** — qué reporta el issue, en 1-2 frases.
+            **Causa probable** — la hipótesis técnica concreta.
+            **Código implicado** — funciones y líneas citadas como `game.js:243`.
+            **Enfoque sugerido** — cómo abordarías el arreglo, sin escribir el código.
+            **Cómo reproducir** — pasos concretos en el navegador; si el issue no
+            los da, indica qué falta.
+            **Confianza** — alta / media / baja, y por qué.
+
+            Sé concreto y breve. Si el issue es vago, dilo claramente, marca
+            `needs-info`, pregunta lo que falta y declara confianza baja.
+
+            ## 4. Comentario único (sticky)
+
+            No acumules comentarios: reutiliza el tuyo. Busca en los comentarios
+            del issue uno que empiece por `<!-- claude-triage -->`:
+
+            - Si existe, actualízalo (usa su `id` de la salida JSON de
+              `gh issue view ... --json comments`):
+                  gh api -X PATCH /repos/${{ github.repository }}/issues/comments/ID -f body=@archivo.md
+            - Si no existe, créalo:
+                  gh issue comment ${{ github.event.issue.number }} --body-file archivo.md
+
+            Escribe el cuerpo en un archivo temporal bajo `/tmp` (nunca dentro
+            del repositorio) y pásalo con `--body-file` / `-f body=@archivo`
+            para no romper el markdown al escapar comillas.

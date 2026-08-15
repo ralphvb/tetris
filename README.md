@@ -25,6 +25,7 @@ Implementación del clásico **Tetris** en JavaScript vanilla, usando HTML5 Canv
   - [Tecnologías](#tecnologías)
   - [Estructura del proyecto](#estructura-del-proyecto)
   - [Personalización](#personalización)
+  - [Automatización con Claude](#automatización-con-claude)
   - [Licencia](#licencia)
 
 ---
@@ -178,6 +179,43 @@ Algunos parámetros fáciles de tunear en `game.js`:
 | `dropInterval` | Velocidad inicial de caída en ms         | `1000`                |
 
 > Si cambias `COLS`, `ROWS` o `BLOCK`, recuerda ajustar también `width` y `height` del `<canvas id="board">` en `index.html` para que coincida (`COLS × BLOCK` × `ROWS × BLOCK`).
+
+---
+
+## Automatización con Claude
+
+El repositorio usa [`anthropics/claude-code-action`](https://github.com/anthropics/claude-code-action) en tres workflows de GitHub Actions:
+
+| Workflow                             | Cuándo se dispara                            | Qué hace                                                                 |
+| ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------ |
+| `claude-issue-triage.yml`            | Al **abrir o editar** un issue                | Asigna labels y publica un diagnóstico técnico del problema              |
+| `claude.yml`                         | Al mencionar **`@claude`** en issue/PR        | Ejecuta lo que le pidas: escribir el fix, abrir un PR, responder dudas    |
+| `claude-code-review.yml`             | Al abrir o actualizar un **pull request**     | Revisa el código del PR                                                  |
+
+Los tres se autentican con el secret `CLAUDE_CODE_OAUTH_TOKEN` del repositorio.
+
+### Flujo de trabajo típico
+
+1. Alguien abre un issue describiendo un bug o una mejora.
+2. **`claude-issue-triage.yml`** lee el issue y el código, le pone labels del catálogo y deja un comentario con: _Resumen_, _Causa probable_, _Código implicado_ (con referencias tipo `game.js:243`), _Enfoque sugerido_, _Cómo reproducir_ y _Confianza_. Si el issue es vago, lo marca `needs-info` y pregunta lo que falta.
+   - Es un comentario **único**: al editar el issue se actualiza en vez de duplicarse.
+   - Este workflow **no** escribe código ni abre PRs.
+3. Con el diagnóstico ya sobre la mesa, comentas **`@claude implementa el arreglo propuesto`** en el issue y `claude.yml` crea la rama y el PR.
+4. **`claude-code-review.yml`** revisa ese PR automáticamente.
+
+> Si el issue ya menciona `@claude` al crearse, el triage se salta (lo atiende `claude.yml`) para no duplicar comentarios.
+
+### Labels
+
+El catálogo vive en [`.github/labels.yml`](.github/labels.yml) y es una **lista cerrada**: el triage solo elige de ahí, nunca crea labels nuevos. Se agrupa en tipo (`bug`, `enhancement`, `documentation`, `refactor`, `question`), área (`gameplay`, `ui`, `controls`, `scoring`, `rendering`, `performance`), prioridad (`prioridad-alta/media/baja`) y meta (`needs-info`, `good-first-issue`).
+
+Para aplicarlos en GitHub, lanza el workflow **Sync labels** desde la pestaña _Actions_, o en local:
+
+```bash
+GH_TOKEN=$(gh auth token) .github/scripts/sync-labels.sh
+```
+
+Es idempotente. Si añades o cambias un label, edita **tanto** `.github/labels.yml` como el array `LABELS` de `.github/scripts/sync-labels.sh`, y actualiza la lista del prompt en `.github/workflows/claude-issue-triage.yml`.
 
 ---
 

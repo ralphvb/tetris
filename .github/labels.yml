@@ -1,0 +1,81 @@
+# Catálogo de labels del repositorio.
+#
+# Esta es la lista cerrada de la que el triage automático de issues
+# (.github/workflows/claude-issue-triage.yml) puede elegir: Claude no crea
+# labels nuevos.
+#
+# Para aplicarlos en GitHub, ejecuta el workflow "Sync labels" desde la pestaña
+# Actions, o localmente:
+#
+#     GH_TOKEN=$(gh auth token) .github/scripts/sync-labels.sh
+#
+# Si editas esta lista, actualiza también el array LABELS de
+# .github/scripts/sync-labels.sh (el script es la fuente que se ejecuta).
+
+# --- Tipo: qué clase de trabajo es ---
+- name: bug
+  color: d73a4a
+  description: Algo no funciona como debería
+
+- name: enhancement
+  color: a2eeef
+  description: Nueva funcionalidad o mejora de una existente
+
+- name: documentation
+  color: 0075ca
+  description: Cambios en README.md, CLAUDE.md o comentarios
+
+- name: refactor
+  color: c5def5
+  description: Reorganización del código sin cambiar el comportamiento
+
+- name: question
+  color: d876e3
+  description: Duda o petición de aclaración
+
+# --- Área: qué parte del juego toca ---
+- name: gameplay
+  color: 5319e7
+  description: Mecánicas del juego (caída, rotación, colisiones, bloqueo de pieza)
+
+- name: ui
+  color: 1d76db
+  description: Maquetación y estilos (index.html, style.css, overlays)
+
+- name: controls
+  color: 0e8a16
+  description: Entrada de teclado y respuesta a las teclas
+
+- name: scoring
+  color: fbca04
+  description: Puntuación, líneas, niveles y velocidad de caída
+
+- name: rendering
+  color: e99695
+  description: Dibujado en canvas (draw, drawBlock, ghost, vista previa)
+
+- name: performance
+  color: ff9f1c
+  description: Fluidez del bucle de juego, uso de CPU, frames
+
+# --- Prioridad ---
+- name: prioridad-alta
+  color: b60205
+  description: Rompe el juego o bloquea el uso normal
+
+- name: prioridad-media
+  color: fbca04
+  description: Molesto pero con solución alternativa
+
+- name: prioridad-baja
+  color: 0e8a16
+  description: Detalle menor o mejora opcional
+
+# --- Meta ---
+- name: needs-info
+  color: bfd4f2
+  description: Falta información para reproducir o entender el problema
+
+- name: good-first-issue
+  color: 7057ff
+  description: Buen punto de entrada para alguien nuevo en el proyecto

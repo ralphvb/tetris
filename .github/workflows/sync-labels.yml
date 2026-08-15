@@ -1,0 +1,31 @@
+name: Sync labels
+
+# Aplica el catálogo de labels (.github/labels.yml) al repositorio.
+# Se puede lanzar a mano desde Actions, y se re-aplica solo cuando cambia el
+# script o el catálogo en la rama por defecto.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/labels.yml'
+      - '.github/scripts/sync-labels.sh'
+      - '.github/workflows/sync-labels.yml'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Sync labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: bash .github/scripts/sync-labels.sh
