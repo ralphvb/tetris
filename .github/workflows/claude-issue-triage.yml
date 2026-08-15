@@ -1,8 +1,8 @@
 name: Claude Issue Triage
 
 # Cuando se abre o edita un issue, Claude lo analiza: le asigna labels del
-# catálogo de .github/labels.yml y publica un diagnóstico técnico en español
-# que sirve de punto de partida para el fix.
+# catálogo de .github/labels.yml y publica un diagnóstico funcional en español
+# (en Markdown de GitHub, sin detalles del código a modificar).
 #
 # No escribe código ni abre PRs: para eso, comenta "@claude ..." en el issue
 # (lo atiende claude.yml).
@@ -104,15 +104,40 @@ jobs:
             `<!-- claude-triage -->` y con estas secciones en este orden:
 
             **Resumen** — qué reporta el issue, en 1-2 frases.
-            **Causa probable** — la hipótesis técnica concreta.
-            **Código implicado** — funciones y líneas citadas como `game.js:243`.
-            **Enfoque sugerido** — cómo abordarías el arreglo, sin escribir el código.
+            **Causa probable** — la hipótesis, descrita en términos de
+            comportamiento del juego (qué mecánica falla y en qué situación).
+            **Alcance** — qué parte de la experiencia se ve afectada (jugabilidad,
+            controles, interfaz, puntuación, dibujado, rendimiento).
             **Cómo reproducir** — pasos concretos en el navegador; si el issue no
             los da, indica qué falta.
             **Confianza** — alta / media / baja, y por qué.
 
             Sé concreto y breve. Si el issue es vago, dilo claramente, marca
             `needs-info`, pregunta lo que falta y declara confianza baja.
+
+            ### Formato del comentario
+
+            Escríbelo en Markdown válido para GitHub (GitHub Flavored Markdown),
+            de modo que se renderice bien en la web: usa encabezados `###` para
+            cada sección, listas con `-`, listas numeradas para los pasos de
+            reproducción y **negritas** para lo importante. No uses HTML crudo
+            (salvo el marcador `<!-- claude-triage -->` de la primera línea) ni
+            tablas innecesarias.
+
+            ### Qué NO exponer
+
+            Lees el código solo para orientarte: el comentario es un diagnóstico
+            funcional, NO una guía de implementación. En el comentario publicado
+            NO incluyas:
+
+            - nombres de archivos ni rutas (`game.js`, `index.html`, `style.css`)
+            - nombres de funciones, variables o constantes del proyecto
+            - números de línea ni referencias del tipo `game.js:243`
+            - fragmentos de código, diffs, pseudocódigo o bloques ``` con código
+            - instrucciones sobre qué modificar o cómo implementar el arreglo
+
+            Describe el problema y su efecto para quien juega; deja el "cómo
+            arreglarlo" para el PR.
 
             ## 4. Comentario único (sticky)
 
