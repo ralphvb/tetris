@@ -201,6 +201,63 @@ body {
   display: none;
 }
 
+/* ---- Habilidades (mejora 05) ---- */
+.energy-bar {
+  width: 100%;
+  height: 10px;
+  background: var(--board-bg);
+  border: 1px solid var(--board-border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.energy-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--value-color);
+  transition: width 0.15s;
+}
+
+/* Energía insuficiente: parpadeo breve al pulsar una tecla de habilidad. */
+.energy-fill.flash {
+  animation: energy-flash 0.4s ease;
+}
+
+@keyframes energy-flash {
+  0%, 100% { background: var(--value-color); }
+  50% { background: var(--overlay-title-color); }
+}
+
+.skills-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.skills-list li {
+  font-size: 11px;
+  color: var(--control-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Cola de próximas piezas (habilidad "ver 5 siguientes"): un chip de color por
+   pieza, en el orden en que van a salir. */
+.preview-chips {
+  display: flex;
+  gap: 4px;
+}
+
+.preview-chips .chip {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--board-border);
+}
+
 /* ---- Controles ---- */
 .controls ul {
   list-style: none;

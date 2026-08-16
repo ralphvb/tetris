@@ -87,6 +87,11 @@ Después abre `http://localhost:8000` en el navegador.
 | `Espacio` | Hard drop (caída instantánea)     |
 | `C` o `Shift` | Reservar la pieza actual (_hold_) |
 | `P`       | Pausar / reanudar                 |
+| `1`       | Habilidad: ver 5 piezas siguientes (20 de energía) |
+| `2`       | Habilidad: cambiar la pieza actual (30 de energía) |
+| `3`       | Habilidad: ralentizar la caída 10 s (40 de energía) |
+| `4`       | Habilidad: deshacer el último fijado (60 de energía) |
+| `5`       | Habilidad: reservar pieza, igual que `C` (10 de energía) |
 
 ---
 
@@ -99,7 +104,7 @@ El juego se compone del marcado, los estilos y el motor en módulos:
 Define la estructura visual:
 
 - Un `<canvas id="board">` de **300 × 600** píxeles donde se renderiza el tablero.
-- Un panel lateral con `SCORE`, `LINES`, `LEVEL`, la pieza reservada (`HOLD`), el marcador `COMBO` (solo visible mientras hay racha), la vista de la siguiente pieza y la lista de controles.
+- Un panel lateral con `SCORE`, `LINES`, `LEVEL`, la pieza reservada (`HOLD`), el marcador `COMBO` (solo visible mientras hay racha), la vista de la siguiente pieza, la barra de `ENERGÍA` de las habilidades (con la lista de teclas `1`-`5` y su coste), la cola de próximas piezas (visible solo mientras dura la habilidad "ver 5 siguientes") y la lista de controles.
 - Un overlay para los estados **PAUSA** y **GAME OVER**.
 
 ### 2. `style.css`

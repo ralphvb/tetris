@@ -19,6 +19,7 @@ import { registerHold } from './hold.js';
 import { registerPiezasNuevas } from './piezas-nuevas.js';
 import { registerCombos } from './combos.js';
 import { registerPowerups } from './powerups.js';
+import { registerHabilidades } from './habilidades.js';
 
 const features = [
   registerHold,
@@ -28,6 +29,9 @@ const features = [
   registerPiezasNuevas,
   registerPowerups,
   registerCombos,
+  // Habilidades también envuelve el selector activo (para "ver 5 siguientes"),
+  // así que se registra la última: así hereda pentominós y power-ups.
+  registerHabilidades,
   // ← añade aquí tu register…
 ];
 
