@@ -28,6 +28,7 @@ export const state = {
   dropAccum: 0,       // ms acumulados desde la última bajada
   dropInterval: BASE_DROP_INTERVAL,
   animId: 0,          // id de requestAnimationFrame en curso
+  rotationInverted: false, // mejora 04 (desafío "rotación invertida"): gira en sentido antihorario
 };
 
 export function createBoard() {
@@ -50,4 +51,5 @@ export function resetState() {
   state.lastTime = 0;
   state.dropAccum = 0;
   state.dropInterval = BASE_DROP_INTERVAL;
+  state.rotationInverted = false;
 }

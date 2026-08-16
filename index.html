@@ -18,6 +18,18 @@
       <canvas id="board" width="300" height="600"></canvas>
 
       <aside class="panel">
+        <div class="panel-section" id="mode-section">
+          <span class="label">MODO</span>
+          <select id="mode-select">
+            <option value="clasico">Clásico</option>
+            <option value="sprint">Sprint 40</option>
+            <option value="basura">Basura</option>
+            <option value="sembrado">Tablero sembrado</option>
+            <option value="invisibles">Piezas invisibles</option>
+            <option value="rotacion">Rotación invertida</option>
+          </select>
+        </div>
+
         <div class="panel-section">
           <span class="label">SCORE</span>
           <span class="value" id="score">0</span>
@@ -29,6 +41,11 @@
         <div class="panel-section">
           <span class="label">LEVEL</span>
           <span class="value" id="level">1</span>
+        </div>
+
+        <div class="panel-section hidden" id="challenge-section">
+          <span class="label">OBJETIVO</span>
+          <span class="challenge-value" id="challenge-status">—</span>
         </div>
 
         <div class="panel-section" id="hold-section">

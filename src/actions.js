@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { collide, merge, clearLines } from './board.js';
-import { randomPiece, tryRotate, ghostY } from './pieces.js';
+import { randomPiece, tryRotate, ghostY, rotateCW, rotateCCW } from './pieces.js';
 import { addLineClearScore, addSoftDropScore, addHardDropScore } from './scoring.js';
 import { updateHUD } from './hud.js';
 import { EVENTS, emit } from './events.js';
@@ -22,8 +22,12 @@ export function moveRight() {
   return true;
 }
 
+// PUNTO DE EXTENSIÓN — sentido de rotación:
+// state.rotationInverted (mejora 04, desafío "rotación invertida") cambia el
+// sentido de todas las rotaciones sin tocar cada llamador (input.js,
+// combos.js re-vincula esta misma función); por defecto es horario.
 export function rotate() {
-  return tryRotate(state.current);
+  return tryRotate(state.current, state.rotationInverted ? rotateCCW : rotateCW);
 }
 
 export function softDrop() {

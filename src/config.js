@@ -41,6 +41,9 @@ export const COLORS = [
   '#795548', // 16 Gravedad
   '#4fc3f7', // 17 Congelar
   '#eceff1', // 18 Comodín (resultado del Tinte; nunca sale como pieza)
+  // Modo desafío (mejora 04). Igual que el Comodín: nunca sale como pieza,
+  // solo se escribe directamente en state.board.
+  '#607d8b', // 19 Basura (desafío "Basura")
 ];
 
 export const PIECES = [
@@ -67,6 +70,7 @@ export const PIECES = [
   [[16]],                                    // 16 Gravedad
   [[17]],                                    // 17 Congelar
   [[18]],                                    // 18 Comodín: nunca se genera como pieza, solo como celda
+  [[19]],                                    // 19 Basura: nunca se genera como pieza, solo como celda
 ];
 
 // Número TOTAL de tipos de pieza, clásicos y especiales. Se deriva de PIECES:

@@ -20,6 +20,7 @@
   --kbd-text: #aaa;
   --overlay-bg: rgba(10, 10, 20, 0.75);
   --overlay-title-color: #e57373;
+  --overlay-victory-color: #81c784;
   --overlay-score-color: #7aa2f7;
   --restart-bg: #7aa2f7;
   --restart-text: #0f0f17;
@@ -45,6 +46,7 @@ body.light-theme {
   --kbd-text: #45475f;
   --overlay-bg: rgba(255, 255, 255, 0.85);
   --overlay-title-color: #d32f2f;
+  --overlay-victory-color: #2e7d32;
   --overlay-score-color: #3f5fd1;
   --restart-bg: #3f5fd1;
   --restart-text: #ffffff;
@@ -196,9 +198,29 @@ body {
   opacity: 0.4;
 }
 
-/* Marcador de combo (mejora 03): solo visible mientras hay racha. */
+/* Marcador de combo (mejora 03): solo visible mientras hay racha.
+   También lo usa el marcador de objetivo del desafío (mejora 04). */
 .panel-section.hidden {
   display: none;
+}
+
+/* ---- Modo desafío (mejora 04) ---- */
+#mode-select {
+  width: 100%;
+  background: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
+  color: var(--fg);
+  border-radius: 4px;
+  padding: 5px 6px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.challenge-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--value-color);
 }
 
 /* ---- Habilidades (mejora 05) ---- */
@@ -313,6 +335,11 @@ kbd {
   font-weight: 800;
   letter-spacing: 4px;
   color: var(--overlay-title-color);
+}
+
+/* Victoria de un desafío (mejora 04): mismo overlay, color distinto. */
+#overlay-title.victory {
+  color: var(--overlay-victory-color);
 }
 
 #overlay-score {

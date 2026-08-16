@@ -20,6 +20,7 @@ import { registerPiezasNuevas } from './piezas-nuevas.js';
 import { registerCombos } from './combos.js';
 import { registerPowerups } from './powerups.js';
 import { registerHabilidades } from './habilidades.js';
+import { registerDesafios } from './desafios.js';
 
 const features = [
   registerHold,
@@ -32,7 +33,10 @@ const features = [
   // Habilidades también envuelve el selector activo (para "ver 5 siguientes"),
   // así que se registra la última: así hereda pentominós y power-ups.
   registerHabilidades,
-  // ← añade aquí tu register…
+  // Desafíos reutiliza todo lo anterior y necesita ser el último handler de
+  // EVENTS.GAME_OVER en registrarse para poder sustituir el texto del overlay
+  // (los handlers se ejecutan en orden de registro).
+  registerDesafios,
 ];
 
 export function registerFeatures() {
