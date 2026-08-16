@@ -33,6 +33,14 @@ export const COLORS = [
   '#5c6bc0', // 10 Y
   '#c0ca33', // 11 Punto (1×1)
   '#8d6e63', // 12 Cuadro hueco
+  // Power-ups (mejora 01). 1×1, como el Punto — se distinguen solo por color
+  // porque nunca conviven varias piezas especiales en pantalla a la vez.
+  '#ff5722', // 13 Bomba
+  '#fff176', // 14 Rayo
+  '#ab47bc', // 15 Tinte
+  '#795548', // 16 Gravedad
+  '#4fc3f7', // 17 Congelar
+  '#eceff1', // 18 Comodín (resultado del Tinte; nunca sale como pieza)
 ];
 
 export const PIECES = [
@@ -51,6 +59,14 @@ export const PIECES = [
   [[0,10],[10,10],[0,10],[0,10]],            // 10 Y: 4×2, gira a 2×4
   [[11]],                                    // 11 Punto (1×1)
   [[12,12,12],[12,0,12],[12,12,12]],         // 12 Cuadro hueco: simétrico
+  // Power-ups (mejora 01). No salen por azar uniforme: los concede
+  // src/features/powerups.js cada POWERUP_LINES líneas limpiadas.
+  [[13]],                                    // 13 Bomba
+  [[14]],                                    // 14 Rayo
+  [[15]],                                    // 15 Tinte
+  [[16]],                                    // 16 Gravedad
+  [[17]],                                    // 17 Congelar
+  [[18]],                                    // 18 Comodín: nunca se genera como pieza, solo como celda
 ];
 
 // Número TOTAL de tipos de pieza, clásicos y especiales. Se deriva de PIECES:
