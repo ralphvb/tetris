@@ -174,7 +174,7 @@ python3 -m http.server 8000   # luego http://localhost:8000
 | - | ------ | ------ |
 | — | Motor modular (`src/`) + documentación | ✅ en `feature/upgrades` |
 | 1 | Power-ups | ⬜ pendiente |
-| 2 | Piezas nuevas | ⬜ pendiente |
+| 2 | Piezas nuevas | ✅ implementada en `upgrade/02-piezas-nuevas` (PR abierto contra `feature/upgrades`) |
 | 3 | Combos | ⬜ pendiente |
 | 4 | Desafíos | ⬜ pendiente |
 | 5 | Habilidades | ⬜ pendiente |

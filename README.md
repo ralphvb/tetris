@@ -35,6 +35,10 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 
 - Tablero de **10 × 20** celdas.
 - Las **7 piezas estándar** (I, O, T, S, Z, J, L) con colores diferenciados.
+- **Piezas especiales** que rompen la rutina de los tetrominós:
+  - **Plus (+)**, **U** e **Y**: pentominós de 5 celdas que salen de vez en cuando (≈6 % al empezar, hasta un 12 % en niveles altos).
+  - **Punto (1×1)**: se **regala** como recompensa la siguiente vez que haces un Tetris (4 líneas de golpe); nunca sale por azar.
+  - **Cuadro hueco (3×3)**: anillo de 8 celdas que deja un agujero irrellenable. Solo aparece **a partir del nivel 5** y con poca frecuencia.
 - **Rotación** con _wall kicks_ básicos (pequeños desplazamientos para que la pieza pueda rotar pegada a la pared).
 - **Soft drop** (bajada acelerada) y **hard drop** (caída instantánea).
 - **Pieza fantasma** (_ghost piece_): muestra dónde aterrizará la pieza actual.
@@ -220,7 +224,8 @@ Algunos parámetros fáciles de tunear en `src/config.js`:
 | `COLS`         | Columnas del tablero                     | `10`                  |
 | `ROWS`         | Filas del tablero                        | `20`                  |
 | `BLOCK`        | Tamaño en píxeles de cada celda          | `30`                  |
-| `COLORS`       | Paleta de colores por tipo de pieza      | 7 colores             |
+| `COLORS`       | Paleta de colores por tipo de pieza      | 12 colores            |
+| `STANDARD_PIECE_COUNT` | Cuántas piezas reparte la bolsa por defecto (las clásicas) | `7` |
 | `LINE_SCORES`  | Puntos por 1, 2, 3 o 4 líneas eliminadas | `[0,100,300,500,800]` |
 | `BASE_DROP_INTERVAL` | Velocidad inicial de caída en ms   | `1000`                |
 

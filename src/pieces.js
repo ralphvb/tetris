@@ -1,6 +1,6 @@
 'use strict';
 
-import { COLS, PIECES, PIECE_COUNT } from './config.js';
+import { COLS, PIECES, STANDARD_PIECE_COUNT } from './config.js';
 import { collide } from './board.js';
 import { state } from './state.js';
 
@@ -19,8 +19,11 @@ export const KICKS = [0, -1, 1, -2, 2];
 //     setPieceSelector(() => raro() ? PENTOMINO : defaultPieceSelector());
 let pieceSelector = defaultPieceSelector;
 
+// Bolsa por defecto: uniforme entre los SIETE tetrominós clásicos. No usa
+// PIECE_COUNT a propósito — desde la mejora 02 hay piezas especiales en PIECES
+// que solo deben salir cuando su selector las concede.
 export function defaultPieceSelector() {
-  return Math.floor(Math.random() * PIECE_COUNT) + 1;
+  return Math.floor(Math.random() * STANDARD_PIECE_COUNT) + 1;
 }
 
 export function setPieceSelector(fn) {

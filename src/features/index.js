@@ -16,9 +16,11 @@
 //     const features = [registerHold];
 
 import { registerHold } from './hold.js';
+import { registerPiezasNuevas } from './piezas-nuevas.js';
 
 const features = [
   registerHold,
+  registerPiezasNuevas,
   // ← añade aquí tu register…
 ];
 

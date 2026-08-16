@@ -42,52 +42,73 @@ En `src/config.js`, añade entradas **al final y en el mismo índice** de `COLOR
 y `PIECES`. `PIECE_COUNT` se deriva de `PIECES.length`, así que no hay que tocar
 nada más: `randomPiece()`, `merge()` y `drawBlock()` las recogen solas.
 
+Implementado así (los tonos se eligieron en los huecos de matiz que dejan los
+siete clásicos, para que se distingan en tema claro y oscuro):
+
 ```js
 export const COLORS = [
   null,
   /* …los 7 actuales… */
-  '#f06292', // 8  Plus
-  '#4db6ac', // 9  U
-  '#9575cd', // 10 Y
-  '#fff176', // 11 Punto
-  '#a1887f', // 12 Cuadro hueco
+  '#ec407a', // 8  Plus (+)       magenta
+  '#009688', // 9  U              verde azulado
+  '#5c6bc0', // 10 Y              índigo
+  '#c0ca33', // 11 Punto (1×1)    lima
+  '#8d6e63', // 12 Cuadro hueco   marrón
 ];
 
 export const PIECES = [
   null,
   /* …los 7 actuales… */
-  [[0,8,0],[8,8,8],[0,8,0]],                      // Plus
-  [[9,0,9],[9,9,9],[0,0,0]],                      // U
-  [[0,10,0],[10,10,0],[0,10,0],[0,10,0]],         // Y (revisar orientación)
-  [[11]],                                          // Punto
-  [[12,12,12],[12,0,12],[12,12,12]],              // Cuadro hueco
+  [[0,8,0],[8,8,8],[0,8,0]],                 // Plus
+  [[9,0,9],[9,9,9],[0,0,0]],                 // U
+  [[0,10],[10,10],[0,10],[0,10]],            // Y: 4×2, gira a 2×4
+  [[11]],                                    // Punto
+  [[12,12,12],[12,0,12],[12,12,12]],         // Cuadro hueco
 ];
 ```
 
-Elige colores que se distingan de los siete existentes **en los dos temas**.
+**Ojo con `PIECE_COUNT`.** Se deriva de `PIECES.length`, así que al añadir las
+cinco piezas la bolsa por defecto pasaría a repartirlas de forma uniforme
+(≈42 % de piezas raras) aunque la mejora estuviera desactivada. Por eso se añadió
+`STANDARD_PIECE_COUNT = 7` en `config.js` y `defaultPieceSelector()`
+(`pieces.js`) reparte solo entre los clásicos: las especiales existen en las
+listas, pero únicamente salen cuando el selector de esta mejora las concede.
 
 ### 2. Controlar cuándo salen
 
-No modifiques `randomPiece()`. Sustituye el selector:
+No se modifica `randomPiece()`: `src/features/piezas-nuevas.js` sustituye el
+selector con este orden de prioridad —recompensa → castigo de nivel alto →
+pentominó → clásica:
 
 ```js
-import { setPieceSelector, defaultPieceSelector } from '../pieces.js';
-
 setPieceSelector(() => {
-  if (recompensaPendiente) { recompensaPendiente = false; return PUNTO; }
-  if (state.level >= 5 && Math.random() < 0.03) return CUADRO_HUECO;
-  if (Math.random() < probabilidadPentomino()) return elegirPentomino();
+  if (dotPending) { dotPending = false; return DOT; }
+  if (state.level >= RING_MIN_LEVEL && Math.random() < RING_CHANCE) return RING;
+  if (Math.random() < pentominoChance()) return pickPentomino();
   return defaultPieceSelector();   // los 7 de siempre
 });
 ```
 
-Y la recompensa del Tetris:
+Y la recompensa del Tetris, con su limpieza al reiniciar (el pendiente es estado
+del módulo, no de `state`):
 
 ```js
-on(EVENTS.LINES_CLEAR, ({ cleared }) => {
-  if (cleared === 4) recompensaPendiente = true;
-});
+on(EVENTS.LINES_CLEAR, ({ cleared }) => { if (cleared >= 4) dotPending = true; });
+on(EVENTS.RESET, () => { dotPending = false; });
 ```
+
+Números finales:
+
+| Constante | Valor | Efecto |
+| --------- | ----- | ------ |
+| `PENTOMINO_BASE_CHANCE` | `0.06` | probabilidad conjunta de Plus/U/Y en el nivel 1 |
+| `PENTOMINO_LEVEL_STEP` | `0.005` | cuánto sube por nivel |
+| `PENTOMINO_MAX_CHANCE` | `0.12` | tope |
+| pesos dentro del grupo | U `0.4`, Y `0.4`, Plus `0.2` | el Plus es el más raro por ser el más difícil de encajar |
+| `RING_MIN_LEVEL` / `RING_CHANCE` | `5` / `0.03` | el cuadro hueco no existe antes del nivel 5 |
+
+Medido sobre 100 000 tiradas: 6 % de piezas especiales en el nivel 1, 11 % en el
+5 y 15 % en el 15 — la inmensa mayoría siguen siendo clásicas.
 
 ### Detalles que se pasan por alto
 
