@@ -34,7 +34,7 @@ New behavior hooks into the engine instead of editing it: `on(EVENTS.…)` (`eve
 
 ## Conventions
 
-- Canvas pixel sizes are hardcoded in `index.html`. `#board` (`300 × 600`) must equal `COLS*BLOCK × ROWS*BLOCK`, and `#next-canvas` (`120 × 120`) equals `NEXT_CELLS × NEXT_BLOCK` from `config.js`. Changing `COLS`/`ROWS`/`BLOCK` means updating the HTML too.
+- Canvas pixel sizes are hardcoded in `index.html`. `#board` (`300 × 600`) must equal `COLS*BLOCK × ROWS*BLOCK`, and `#next-canvas` / `#hold-canvas` (`120 × 120`) equal `NEXT_CELLS × NEXT_BLOCK` from `config.js`. Changing `COLS`/`ROWS`/`BLOCK` means updating the HTML too.
 - User-facing strings and code comments are Spanish (`<html lang="es">`); identifiers are English. Keep both.
 - `README.md` documents the mechanics, controls, and tunable constants in Spanish — update it alongside gameplay changes.
 
