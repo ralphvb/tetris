@@ -25,6 +25,14 @@ export const COLORS = [
   '#e57373', // 5 Z - rojo
   '#90caf9', // 6 J - azul pálido
   '#ffb74d', // 7 L - naranja
+  // Piezas no estándar (mejora 02). Los tonos se eligieron en los huecos de
+  // matiz que dejan los siete clásicos, para que se distingan en tema claro y
+  // oscuro: magenta, verde azulado, índigo, lima y marrón.
+  '#ec407a', // 8  Plus (+)
+  '#009688', // 9  U
+  '#5c6bc0', // 10 Y
+  '#c0ca33', // 11 Punto (1×1)
+  '#8d6e63', // 12 Cuadro hueco
 ];
 
 export const PIECES = [
@@ -36,11 +44,23 @@ export const PIECES = [
   [[5,5,0],[0,5,5],[0,0,0]],                 // Z
   [[6,0,0],[6,6,6],[0,0,0]],                 // J
   [[0,0,7],[7,7,7],[0,0,0]],                 // L
+  // Piezas no estándar (mejora 02). No salen por azar uniforme: la bolsa la
+  // decide src/features/piezas-nuevas.js con setPieceSelector().
+  [[0,8,0],[8,8,8],[0,8,0]],                 // 8  Plus (+): simétrico, no cambia al rotar
+  [[9,0,9],[9,9,9],[0,0,0]],                 // 9  U
+  [[0,10],[10,10],[0,10],[0,10]],            // 10 Y: 4×2, gira a 2×4
+  [[11]],                                    // 11 Punto (1×1)
+  [[12,12,12],[12,0,12],[12,12,12]],         // 12 Cuadro hueco: simétrico
 ];
 
-// Número de tipos de pieza disponibles. Se deriva de PIECES para que añadir
-// una pieza no obligue a tocar randomPiece().
+// Número TOTAL de tipos de pieza, clásicos y especiales. Se deriva de PIECES:
+// sirve para recorrer todos los tipos, no para sortear la bolsa.
 export const PIECE_COUNT = PIECES.length - 1;
+
+// Cuántas de esas piezas son los tetrominós clásicos (I..L, índices 1..7).
+// La bolsa por defecto solo reparte estas: las piezas especiales las concede la
+// mejora 02 con sus propias probabilidades.
+export const STANDARD_PIECE_COUNT = 7;
 
 // Puntos por 1, 2, 3 y 4 líneas, multiplicados por el nivel actual.
 export const LINE_SCORES = [0, 100, 300, 500, 800];
