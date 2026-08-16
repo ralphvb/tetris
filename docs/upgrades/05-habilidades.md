@@ -105,6 +105,31 @@ Si no hay energía suficiente: parpadeo de la barra, nada más.
 - [ ] Todo el estado (energía, efectos activos, instantánea) se reinicia.
 - [ ] Resto de la Definition of Done del [README](README.md).
 
+## Notas de la implementación
+
+Lo implementado en `src/features/habilidades.js` sigue el diseño de arriba con
+estas decisiones concretas, donde el spec dejaba margen:
+
+- **Ver 5 siguientes** usa la opción recomendada (cola propia + `setPieceSelector`
+  envolviendo al selector activo, capturado una sola vez como `previousSelector`).
+  Se mantiene visible **8 s** (`VER5_DURATION`), contadas por `EVENTS.TICK`.
+- **Ralentizar** dura **10 s** (`RALENTIZAR_DURATION`) como pide el spec. El
+  aviso sobre subir de nivel durante el efecto tenía un matiz no cubierto por el
+  spec: `scoring.js` ya recalcula `state.dropInterval = intervalForLevel(nivel)`
+  al emitir `LEVEL_UP`, así que el habilidades.js vuelve a doblarlo en un
+  listener propio de `LEVEL_UP` mientras el efecto sigue activo, para que la
+  ralentización no desaparezca a mitad de partida.
+- **Deshacer** toma la instantánea en `EVENTS.SPAWN` (la opción B que menciona
+  el spec): en ese momento el tablero ya refleja el resultado del último
+  `lockPiece`, así que es exactamente lo que hay que restaurar. Guarda también
+  `dropInterval`, no solo tablero/marcadores.
+- **Cambiar pieza** y **Ver 5** comparten el mismo selector envuelto: si se usa
+  "cambiar pieza" mientras la cola de "ver 5" tiene elementos, consume el
+  primero de la cola en vez de generar una pieza totalmente nueva — evita que
+  la vista previa se desincronice de lo que realmente va a salir.
+- El parpadeo de energía insuficiente es una animación CSS (`.energy-fill.flash`),
+  no un `setTimeout` que cuente tiempo de juego: es puramente cosmético.
+
 ## Pruebas manuales
 
 1. Limpia líneas hasta llenar la barra; comprueba el tope en 100.
