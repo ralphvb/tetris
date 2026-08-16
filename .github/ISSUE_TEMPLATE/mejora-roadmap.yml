@@ -1,0 +1,82 @@
+name: Mejora del roadmap
+description: Abrir el issue de seguimiento de una de las seis mejoras de docs/upgrades/
+title: "[mejora] "
+labels: ["enhancement", "roadmap"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Una mejora del roadmap = un issue = una subrama que nace de
+        `feature/upgrades` y vuelve a `feature/upgrades` por PR.
+
+        Antes de empezar, lee
+        [`docs/upgrades/README.md`](../blob/feature/upgrades/docs/upgrades/README.md)
+        y [`docs/upgrades/ARQUITECTURA.md`](../blob/feature/upgrades/docs/upgrades/ARQUITECTURA.md).
+
+  - type: dropdown
+    id: mejora
+    attributes:
+      label: Mejora
+      options:
+        - 01 — Power-ups aleatorios
+        - 02 — Piezas nuevas no estándar
+        - 03 — Modo combo y multiplicadores
+        - 04 — Modo desafío con objetivos
+        - 05 — Sistema de habilidades cargables
+        - 06 — Sistema de Hold
+    validations:
+      required: true
+
+  - type: input
+    id: rama
+    attributes:
+      label: Subrama
+      description: Nombre exacto de la rama, según el roadmap.
+      placeholder: upgrade/06-hold
+    validations:
+      required: true
+
+  - type: textarea
+    id: alcance
+    attributes:
+      label: Alcance acordado
+      description: >
+        Qué entra y qué no en este PR. Si te desvías del spec de
+        docs/upgrades/, dilo aquí y actualiza el documento en el mismo PR.
+    validations:
+      required: true
+
+  - type: textarea
+    id: ganchos
+    attributes:
+      label: Puntos de extensión que vas a usar
+      description: >
+        Eventos, bindKey, painters, modificadores de puntuación, campos de
+        `state`… Si crees que te falta un gancho en el motor, dilo: se abre como
+        PR aparte contra feature/upgrades para que lo tengan todas las ramas.
+      placeholder: |
+        - on(EVENTS.LOCK) para reactivar el hold
+        - bindKey('KeyC')
+        - state.hold / state.holdUsed + resetState()
+    validations:
+      required: true
+
+  - type: textarea
+    id: ui
+    attributes:
+      label: Cambios en index.html / style.css
+      description: Panel nuevo, marcador, tecla en la lista de controles…
+
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: Se marcan antes de pedir la revisión del PR.
+      options:
+        - label: Implementada en `src/features/` y registrada en `src/features/index.js`
+        - label: El estado nuevo se reinicia (probado con dos partidas seguidas)
+        - label: Funciona con pausa y tras Game Over → Reiniciar
+        - label: Correcta en tema claro y oscuro
+        - label: No rompe mover / rotar / drops / ghost / NEXT / puntuación
+        - label: Sin errores en la consola del navegador
+        - label: README.md actualizado
