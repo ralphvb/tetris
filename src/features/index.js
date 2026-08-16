@@ -17,10 +17,12 @@
 
 import { registerHold } from './hold.js';
 import { registerPiezasNuevas } from './piezas-nuevas.js';
+import { registerCombos } from './combos.js';
 
 const features = [
   registerHold,
   registerPiezasNuevas,
+  registerCombos,
   // ← añade aquí tu register…
 ];
 

@@ -65,17 +65,36 @@ let ultimoFueDificil = false;
    que aquí `state.lines` todavía no incluye la limpieza en curso.
 
 2. **Contador de combo** — hay que subirlo cuando una pieza limpia y **romperlo
-   cuando una pieza se fija sin limpiar**. Esa segunda mitad es la que se olvida:
+   cuando una pieza se fija sin limpiar**. Esa segunda mitad es la que se olvida.
+
+   Implementado: el incremento **no** ocurre en el handler de `LINES_CLEAR`
+   sino dentro del propio modificador de puntuación, porque `addScoreModifier`
+   se llama *antes* de que se emita `LINES_CLEAR` (ver `addLineClearScore` en
+   `src/scoring.js`) y este clear debe contar para el multiplicador de sí
+   mismo, no para el siguiente:
 
    ```js
    let limpioEsteLock = false;
-   on(EVENTS.LINES_CLEAR, () => { limpioEsteLock = true; combo++; });
-   on(EVENTS.LOCK, () => { limpioEsteLock = false; });  // se emite ANTES
+   on(EVENTS.LOCK, () => { limpioEsteLock = false; });      // se emite ANTES
+   on(EVENTS.LINES_CLEAR, () => { limpioEsteLock = true; }); // solo marca, no incrementa
    on(EVENTS.SPAWN, () => { if (!limpioEsteLock) combo = -1; });
+
+   addScoreModifier((puntos, { cleared }) => {
+     combo++; // -1→0 en el primer clear (sin bono), 0→1 en el segundo (×2)…
+     let total = puntos;
+     if (combo > 0) total *= Math.min(1 + combo, 8);
+     // …
+     return Math.round(total);
+   });
    ```
 
    El orden real de emisión en `lockPiece()` (`src/actions.js`) es
-   `LOCK → LINES_CLEAR → SPAWN`. Léelo antes de escribir la máquina de estados.
+   `LOCK → LINES_CLEAR → SPAWN`, pero el modificador de puntuación corre
+   *dentro* del tramo `LOCK → LINES_CLEAR` (lo llama `addLineClearScore`).
+   Incrementar `combo` en el handler de `LINES_CLEAR`, como sugería la versión
+   original de este documento, deja el multiplicador un clear por detrás
+   (el segundo clear de la racha saldría a ×1 en vez de ×2). Léelo antes de
+   escribir la máquina de estados.
 
 3. **Perfect Clear** — `isEmptyBoard()` ya existe en `src/board.js`.
 
