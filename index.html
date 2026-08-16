@@ -30,13 +30,15 @@
           </select>
         </div>
 
-        <div class="panel-section">
-          <span class="label">SCORE</span>
-          <span class="value" id="score">0</span>
-        </div>
-        <div class="panel-section">
-          <span class="label">LINES</span>
-          <span class="value" id="lines">0</span>
+        <div class="panel-row">
+          <div class="panel-section">
+            <span class="label">SCORE</span>
+            <span class="value" id="score">0</span>
+          </div>
+          <div class="panel-section">
+            <span class="label">LINES</span>
+            <span class="value" id="lines">0</span>
+          </div>
         </div>
         <div class="panel-section">
           <span class="label">LEVEL</span>
@@ -48,19 +50,21 @@
           <span class="challenge-value" id="challenge-status">—</span>
         </div>
 
-        <div class="panel-section" id="hold-section">
-          <span class="label">HOLD</span>
-          <canvas id="hold-canvas" width="120" height="120"></canvas>
+        <div class="panel-row">
+          <div class="panel-section" id="hold-section">
+            <span class="label">HOLD</span>
+            <canvas id="hold-canvas" width="120" height="120"></canvas>
+          </div>
+
+          <div class="panel-section" id="next-section">
+            <span class="label">NEXT</span>
+            <canvas id="next-canvas" width="120" height="120"></canvas>
+          </div>
         </div>
 
         <div class="panel-section hidden" id="combo-section">
           <span class="label">COMBO</span>
           <span class="value" id="combo">×1</span>
-        </div>
-
-        <div class="panel-section">
-          <span class="label">NEXT</span>
-          <canvas id="next-canvas" width="120" height="120"></canvas>
         </div>
 
         <div class="panel-section" id="skills-section">

@@ -13,11 +13,13 @@ import { moveLeft, moveRight, rotate, softDrop, hardDrop, togglePause } from './
 //
 // Opciones por binding:
 //   allowWhenPaused → la tecla responde también en pausa o game over (como P)
-//   preventDefault  → evita el scroll del navegador (como Space)
+//   preventDefault  → evita el scroll del navegador; viene activado por defecto,
+//                      así que es opt-out: pásalo en `false` solo si de verdad
+//                      quieres que la tecla deje pasar el comportamiento nativo.
 
 const bindings = new Map();
 
-export function bindKey(code, handler, { allowWhenPaused = false, preventDefault = false } = {}) {
+export function bindKey(code, handler, { allowWhenPaused = false, preventDefault = true } = {}) {
   bindings.set(code, { handler, allowWhenPaused, preventDefault });
   return () => bindings.delete(code);
 }
@@ -27,10 +29,12 @@ export function unbindKey(code) {
 }
 
 function onKeyDown(e) {
+  const t = e.target;
+  if (t && (t.tagName === 'SELECT' || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
   const binding = bindings.get(e.code);
   if (!binding) return;
-  if (!binding.allowWhenPaused && (state.paused || state.gameOver)) return;
   if (binding.preventDefault) e.preventDefault();
+  if (!binding.allowWhenPaused && (state.paused || state.gameOver)) return;
   binding.handler(e);
   updateHUD();
 }
