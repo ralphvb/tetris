@@ -111,15 +111,30 @@ Y en la lista de controles del panel: `<li><kbd>C</kbd> reservar</li>`.
 
 ## Criterios de aceptación
 
-- [ ] `C` con la reserva vacía guarda la pieza y hace entrar la siguiente.
-- [ ] `C` con reserva llena intercambia; la pieza que sale lo hace **sin rotar**
+- [x] `C` con la reserva vacía guarda la pieza y hace entrar la siguiente.
+- [x] `C` con reserva llena intercambia; la pieza que sale lo hace **sin rotar**
       y centrada arriba.
-- [ ] No se puede reservar dos veces seguidas sin que se haya fijado una pieza.
-- [ ] El panel HOLD muestra la pieza y se atenúa cuando está bloqueado.
-- [ ] `C` no hace nada en pausa ni tras Game Over.
-- [ ] Reiniciar vacía la reserva.
-- [ ] La reserva se ve correctamente en tema claro y oscuro.
-- [ ] Resto de la Definition of Done del [README](README.md).
+- [x] No se puede reservar dos veces seguidas sin que se haya fijado una pieza.
+- [x] El panel HOLD muestra la pieza y se atenúa cuando está bloqueado.
+- [x] `C` no hace nada en pausa ni tras Game Over.
+- [x] Reiniciar vacía la reserva.
+- [x] La reserva se ve correctamente en tema claro y oscuro.
+- [x] Resto de la Definition of Done del [README](README.md).
+
+## Cómo quedó implementada
+
+Sin desviaciones respecto a este spec. Detalles de la implementación:
+
+- `state.hold` y `state.holdUsed` viven en `src/state.js` y se reinician en
+  `resetState()`, para que la mejora 05 pueda leerlos.
+- `src/features/hold.js` exporta `registerHold()` y también `hold()`, que es la
+  función que reutilizará la mejora 05 cobrando energía por llamarla.
+- El repintado del panel va por `registerHudUpdater()`: `updateHUD()` ya se
+  llama tras cada tecla, al fijar una pieza y al arrancar la partida. `RESET` y
+  `THEME_CHANGE` lo repintan aparte, porque ahí el bucle puede estar parado.
+- En el intercambio se asigna primero y se comprueba `collide()` después, igual
+  que hace `spawn()`: `draw()` no pinta la pieza actual tras el game over, así
+  que no queda ninguna incrustada.
 
 ## Pruebas manuales
 

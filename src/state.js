@@ -17,6 +17,8 @@ export const state = {
   board: [],          // matriz ROWS × COLS; 0 = vacío, 1..N = tipo de pieza
   current: null,      // { type, shape, x, y }
   next: null,         // { type, shape, x, y }
+  hold: null,         // pieza reservada (mejora 06); null = reserva vacía
+  holdUsed: false,    // ¿ya se reservó con la pieza en juego?
   score: 0,
   lines: 0,
   level: 1,
@@ -38,6 +40,8 @@ export function resetState() {
   state.board = createBoard();
   state.current = null;
   state.next = null;
+  state.hold = null;
+  state.holdUsed = false;
   state.score = 0;
   state.lines = 0;
   state.level = 1;

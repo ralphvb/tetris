@@ -15,7 +15,10 @@
 //     import { registerHold } from './hold.js';
 //     const features = [registerHold];
 
+import { registerHold } from './hold.js';
+
 const features = [
+  registerHold,
   // ← añade aquí tu register…
 ];
 
