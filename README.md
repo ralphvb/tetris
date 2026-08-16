@@ -46,6 +46,7 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Reserva de pieza** (_hold_): guarda la pieza en juego para más tarde e intercámbiala cuando convenga, con un solo uso por pieza.
 - **Sistema de puntuación** clásico de Tetris (100 / 300 / 500 / 800 multiplicado por nivel).
 - **Combos y multiplicadores**: limpiar líneas en piezas consecutivas multiplica la puntuación (hasta ×8); un T-spin (rotar la T encajándola en un hueco y limpiar) da un bonus fijo; dos Tetris o T-spins seguidos sin limpiezas normales entre medias dan **back-to-back** (+50 %); vaciar el tablero por completo da **Perfect Clear**. Cada racha se anuncia con un aviso flotante sobre el tablero y un marcador `COMBO` en el panel.
+- **Power-ups aleatorios**: cada 10 líneas limpiadas, la siguiente pieza es una especial de 1×1 que dispara un efecto al fijarse (nunca se repite el tipo anterior): **Bomba** (destruye un 3×3), **Rayo** (limpia su fila y su columna enteras), **Tinte** (convierte todos los bloques de un color en comodines), **Gravedad** (compacta el tablero, sin huecos) o **Congelar** (detiene la caída automática 5 s reales, sin gastarse en pausa). Cada disparo suma puntos y se anuncia con una animación sobre el tablero.
 - **Niveles** que aumentan cada 10 líneas y aceleran la caída.
 - **Pausa** y **Game Over** con opción de reinicio.
 - **Interruptor de tema claro/oscuro**: arranca en modo oscuro; el switch en la esquina superior derecha cambia a modo claro y recuerda la preferencia (`localStorage`).
@@ -225,7 +226,7 @@ Algunos parámetros fáciles de tunear en `src/config.js`:
 | `COLS`         | Columnas del tablero                     | `10`                  |
 | `ROWS`         | Filas del tablero                        | `20`                  |
 | `BLOCK`        | Tamaño en píxeles de cada celda          | `30`                  |
-| `COLORS`       | Paleta de colores por tipo de pieza      | 12 colores            |
+| `COLORS`       | Paleta de colores por tipo de pieza      | 18 colores            |
 | `STANDARD_PIECE_COUNT` | Cuántas piezas reparte la bolsa por defecto (las clásicas) | `7` |
 | `LINE_SCORES`  | Puntos por 1, 2, 3 o 4 líneas eliminadas | `[0,100,300,500,800]` |
 | `BASE_DROP_INTERVAL` | Velocidad inicial de caída en ms   | `1000`                |

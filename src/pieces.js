@@ -30,6 +30,14 @@ export function setPieceSelector(fn) {
   pieceSelector = fn ?? defaultPieceSelector;
 }
 
+// Devuelve el selector activo. Existe para que una mejora pueda ENVOLVER al
+// selector de otra en vez de reemplazarlo (p. ej. power-ups sobre piezas
+// nuevas): guarda el selector anterior antes de instalar el suyo con
+// setPieceSelector() y le cede el turno cuando no tiene nada propio que dar.
+export function getPieceSelector() {
+  return pieceSelector;
+}
+
 // Construye una pieza del tipo indicado (o del que decida el selector),
 // centrada en la parte superior del tablero.
 export function makePiece(type) {

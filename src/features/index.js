@@ -18,10 +18,15 @@
 import { registerHold } from './hold.js';
 import { registerPiezasNuevas } from './piezas-nuevas.js';
 import { registerCombos } from './combos.js';
+import { registerPowerups } from './powerups.js';
 
 const features = [
   registerHold,
+  // Power-ups envuelve el selector de piezas activo en vez de sustituirlo, así
+  // que debe registrarse DESPUÉS de piezas-nuevas para no perder pentominós,
+  // Punto ni Cuadro hueco.
   registerPiezasNuevas,
+  registerPowerups,
   registerCombos,
   // ← añade aquí tu register…
 ];

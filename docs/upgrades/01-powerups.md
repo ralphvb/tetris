@@ -113,6 +113,34 @@ Los puntos que concedan los power-ups pasan por el sistema de la mejora 03
 - [ ] Las animaciones no bloquean el juego ni bajan de 60 fps.
 - [ ] Resto de la Definition of Done del [README](README.md).
 
+## Notas de implementación
+
+Lo implementado en `upgrade/01-powerups` sigue el diseño de este documento con
+estas decisiones concretas:
+
+- **Camino A** (tipo de pieza propio): índices 13–17 en `COLORS`/`PIECES`, 1×1
+  como el Punto de la mejora 02. El índice 18 es el «comodín» que deja el
+  Tinte — nunca sale como pieza, solo como celda del tablero.
+- **Selector envuelto, no sustituido**: `pieces.js` gana `getPieceSelector()`
+  (además de `setPieceSelector()` ya existente) para que este módulo pueda
+  capturar el selector activo de la mejora 02 y delegar en él cuando no toca
+  conceder un power-up. En `features/index.js`, `registerPowerups` se activa
+  **después** de `registerPiezasNuevas` por esto mismo.
+- **Concesión**: cada 10 líneas limpiadas (`POWERUP_LINES`), la siguiente
+  pieza es un power-up cuyo tipo se sortea evitando repetir el anterior.
+- **Congelar**: cuenta el tiempo en `EVENTS.TICK` y pone `dropAccum` a 0 en
+  cada tick mientras dura, sin tocar `dropInterval` ni el bucle. Como `TICK`
+  solo se emite mientras `main.js` corre el `requestAnimationFrame`, la pausa
+  lo detiene gratis y un segundo Congelar antes de que expire el primero
+  simplemente refresca los 5 s en vez de acumularlos.
+- **Puntuación**: cada efecto suma `150 × nivel` directamente a `state.score`
+  (no usa `addScoreModifier`, porque no es un multiplicador de la limpieza de
+  líneas sino un bono fijo del propio power-up).
+- **Feedback visual**: un `registerPainter` dibuja la onda de la Bomba, el
+  destello en cruz del Rayo, un marco azulado mientras dura Congelar y el
+  nombre del power-up disparado, todo con temporizador propio comparado
+  contra `performance.now()`.
+
 ## Pruebas manuales
 
 1. Fuerza cada power-up de uno en uno (selector fijo) y verifica su efecto.
