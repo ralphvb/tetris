@@ -176,7 +176,7 @@ python3 -m http.server 8000   # luego http://localhost:8000
 | 1 | Power-ups | ✅ implementada en `upgrade/01-powerups` (PR abierto contra `feature/upgrades`) |
 | 2 | Piezas nuevas | ✅ implementada en `upgrade/02-piezas-nuevas` (PR abierto contra `feature/upgrades`) |
 | 3 | Combos | ✅ implementada en `upgrade/03-combos` (PR abierto contra `feature/upgrades`) |
-| 4 | Desafíos | ⬜ pendiente |
+| 4 | Desafíos | ✅ implementada en `upgrade/04-desafios` (PR pendiente de abrir contra `feature/upgrades`) |
 | 5 | Habilidades | ✅ implementada en `upgrade/05-habilidades` (PR pendiente de abrir contra `feature/upgrades`) |
 | 6 | Hold | ✅ implementada en `upgrade/06-hold` (PR abierto contra `feature/upgrades`) |
 

@@ -114,3 +114,51 @@ exactamente como hoy.
 5. Rotación invertida: alcanzar el nivel del cambio y verificar el giro; volver
    al modo clásico y comprobar que la rotación es la normal otra vez.
 6. Jugar clásico → desafío → clásico sin recargar la página.
+
+## Cómo se implementó de verdad
+
+Un único módulo, `src/features/desafios.js`, sin subcarpeta: los cinco
+desafíos son entradas de un objeto `CHALLENGES` (`setup`/`tick`/
+`onLinesClear`/`onLevelUp`/`hud`), y un pequeño runner los invoca desde
+`EVENTS.RESET`/`TICK`/`LINES_CLEAR`/`LEVEL_UP`. El modo `clasico` no tiene
+entrada: sin desafío activo, el motor se comporta exactamente igual que antes
+de esta mejora.
+
+- **Selector de modo**: no es un overlay inicial, es un `<select id="mode-select">`
+  fijo en el panel lateral (sección `MODO`, arriba del todo). Cambiarlo dispara
+  `restartBtn.click()` — el mismo botón que usa `main.js` — para reiniciar sin
+  importar el `init()` de `main.js` y evitar un ciclo de imports entre
+  `main.js` y `features/`.
+- **Objetivo/progreso**: sección `challenge-section` / `challenge-status` en el
+  panel, oculta en modo clásico vía `registerHudUpdater`.
+- **Sprint** y **Basura** cuentan tiempo acumulando `dt` en `EVENTS.TICK`, que
+  solo se emite mientras el bucle corre — la pausa los detiene gratis, sin
+  lógica adicional.
+- **Basura** inserta la fila con un índice de celda nuevo, `GARBAGE = 19`
+  (`config.js`, con su entrada paralela en `COLORS`/`PIECES` como el Comodín:
+  nunca sale como pieza). Tras desplazar el tablero, sube `state.current.y`
+  hasta que deje de solapar; si en algún momento no cupiera en ningún sitio, el
+  top-out normal de `spawn()` termina la partida, no un chequeo aquí.
+- **Tablero sembrado** escribe filas con un hueco aleatorio directamente en
+  `state.board` desde `setup()`, que corre en `EVENTS.RESET` (antes de la
+  primera pieza).
+- **Piezas invisibles** usa un `registerPainter` que repinta con el color de
+  fondo del tablero (leído de `--board-bg`, cacheado y refrescado en
+  `EVENTS.THEME_CHANGE`) sobre cada celda fijada; el fantasma y la pieza en
+  juego no pasan por `state.board`, así que no se ven afectados.
+- **Rotación invertida** NO revincula teclas (habría pisado el rastreo de
+  T-spin de `combos.js` sobre `ArrowUp`/`KeyX`). En su lugar se añadió un
+  gancho real al motor: `state.rotationInverted` (booleano, en `state.js`,
+  reiniciado en `resetState()`), y `actions.js#rotate()` elige `rotateCW` o
+  `rotateCCW` según ese flag. Cualquier mejora futura que quiera invertir la
+  rotación reutiliza el mismo flag sin tocar bindings.
+- **Victoria/derrota**: `finish(won, detalle)` llama a `endGame()` (para,
+  pinta el estado final, emite `GAME_OVER`) y guarda el resultado en una
+  variable de módulo. El handler de `GAME_OVER` de esta mejora se registra
+  **después** del de `main.js` en `features/index.js` (el import va al final
+  de la lista) y sustituye el título/subtítulo del overlay; en modo clásico no
+  toca nada. Una clase CSS `victory` en `#overlay-title` (`--overlay-victory-color`)
+  distingue visualmente ganar de perder con el mismo overlay.
+
+No hizo falta ninguna subcarpeta `desafios/`: con cinco objetos de datos y un
+runner de ~15 líneas, un solo archivo se mantiene legible.
