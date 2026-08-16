@@ -196,6 +196,11 @@ body {
   opacity: 0.4;
 }
 
+/* Marcador de combo (mejora 03): solo visible mientras hay racha. */
+.panel-section.hidden {
+  display: none;
+}
+
 /* ---- Controles ---- */
 .controls ul {
   list-style: none;

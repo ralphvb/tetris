@@ -45,6 +45,7 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Vista previa** de la siguiente pieza.
 - **Reserva de pieza** (_hold_): guarda la pieza en juego para más tarde e intercámbiala cuando convenga, con un solo uso por pieza.
 - **Sistema de puntuación** clásico de Tetris (100 / 300 / 500 / 800 multiplicado por nivel).
+- **Combos y multiplicadores**: limpiar líneas en piezas consecutivas multiplica la puntuación (hasta ×8); un T-spin (rotar la T encajándola en un hueco y limpiar) da un bonus fijo; dos Tetris o T-spins seguidos sin limpiezas normales entre medias dan **back-to-back** (+50 %); vaciar el tablero por completo da **Perfect Clear**. Cada racha se anuncia con un aviso flotante sobre el tablero y un marcador `COMBO` en el panel.
 - **Niveles** que aumentan cada 10 líneas y aceleran la caída.
 - **Pausa** y **Game Over** con opción de reinicio.
 - **Interruptor de tema claro/oscuro**: arranca en modo oscuro; el switch en la esquina superior derecha cambia a modo claro y recuerda la preferencia (`localStorage`).
@@ -97,7 +98,7 @@ El juego se compone del marcado, los estilos y el motor en módulos:
 Define la estructura visual:
 
 - Un `<canvas id="board">` de **300 × 600** píxeles donde se renderiza el tablero.
-- Un panel lateral con `SCORE`, `LINES`, `LEVEL`, la pieza reservada (`HOLD`), la vista de la siguiente pieza y la lista de controles.
+- Un panel lateral con `SCORE`, `LINES`, `LEVEL`, la pieza reservada (`HOLD`), el marcador `COMBO` (solo visible mientras hay racha), la vista de la siguiente pieza y la lista de controles.
 - Un overlay para los estados **PAUSA** y **GAME OVER**.
 
 ### 2. `style.css`
