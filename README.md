@@ -14,16 +14,15 @@ Implementación del clásico **Tetris** en JavaScript vanilla, usando HTML5 Canv
   - [Tabla de contenidos](#tabla-de-contenidos)
   - [Qué hace el proyecto](#qué-hace-el-proyecto)
   - [Cómo ejecutar el juego](#cómo-ejecutar-el-juego)
-    - [Opción 1: abrir el archivo directamente](#opción-1-abrir-el-archivo-directamente)
-    - [Opción 2: servidor local (recomendado)](#opción-2-servidor-local-recomendado)
   - [Controles](#controles)
   - [Cómo funciona](#cómo-funciona)
     - [1. `index.html`](#1-indexhtml)
     - [2. `style.css`](#2-stylecss)
-    - [3. `game.js`](#3-gamejs)
+    - [3. Los módulos de `src/`](#3-los-módulos-de-src)
     - [Flujo del juego](#flujo-del-juego)
   - [Tecnologías](#tecnologías)
   - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Roadmap de mejoras](#roadmap-de-mejoras)
   - [Personalización](#personalización)
   - [Automatización con Claude](#automatización-con-claude)
   - [Licencia](#licencia)
@@ -49,19 +48,12 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 
 ## Cómo ejecutar el juego
 
-No hay nada que instalar ni compilar. Tienes dos opciones:
+No hay nada que instalar ni compilar, **pero sí hace falta un servidor**: el
+juego se carga como módulos ES (`<script type="module">`) y los navegadores los
+bloquean cuando se abre el archivo con `file://`. Abrir `index.html` con doble
+clic no funciona.
 
-### Opción 1: abrir el archivo directamente
-
-```bash
-open index.html        # macOS
-xdg-open index.html    # Linux
-start index.html       # Windows
-```
-
-### Opción 2: servidor local (recomendado)
-
-Cualquier servidor estático funciona. Algunos ejemplos:
+Cualquier servidor estático sirve:
 
 ```bash
 # Con Python 3
@@ -92,7 +84,7 @@ Después abre `http://localhost:8000` en el navegador.
 
 ## Cómo funciona
 
-El juego se compone de tres archivos que cooperan:
+El juego se compone del marcado, los estilos y el motor en módulos:
 
 ### 1. `index.html`
 
@@ -106,9 +98,27 @@ Define la estructura visual:
 
 Aporta el aspecto visual con estética _retro arcade_, tipografía monoespaciada para los marcadores y _backdrop blur_ en los overlays. Los colores del tema (oscuro por defecto) se definen como variables CSS en `:root`; la clase `body.light-theme` las sobreescribe con la paleta clara.
 
-### 3. `game.js`
+### 3. Los módulos de `src/`
 
-Contiene toda la lógica del juego. A grandes rasgos:
+La lógica está repartida en módulos ES con responsabilidades estrechas:
+
+| Módulo | Responsabilidad |
+| ------ | --------------- |
+| `config.js` | Constantes: dimensiones, colores, piezas, puntuación, velocidades |
+| `state.js` | El objeto `state` y `resetState()` |
+| `events.js` | Bus de eventos del ciclo de vida (`on`, `emit`) |
+| `board.js` | Matriz del tablero: colisiones, fijado, limpieza de líneas |
+| `pieces.js` | Creación, rotación, wall kicks y pieza fantasma |
+| `scoring.js` | Puntos, nivel y velocidad de caída |
+| `render.js` | Todo el dibujado en canvas |
+| `hud.js` | Marcadores del panel y overlay de pausa / game over |
+| `theme.js` | Tema claro/oscuro y su persistencia |
+| `actions.js` | Acciones del jugador y ciclo de vida de la pieza |
+| `input.js` | Teclado, como tabla de teclas |
+| `main.js` | Bucle de juego y cableado entre módulos |
+| `features/` | Una carpeta por mejora del roadmap |
+
+A grandes rasgos:
 
 - **Modelo del tablero**: una matriz `ROWS × COLS` donde cada celda guarda `0` (vacía) o un índice de color (1–7) que identifica la pieza.
 - **Piezas**: definidas como matrices cuadradas. Para rotar se calcula la transposición + reverso de filas (`rotateCW`).
@@ -159,17 +169,49 @@ Cuando una pieza recién generada ya colisiona al aparecer (`spawn`), se dispara
 
 ```
 03-tetris/
-├── index.html      # Estructura del DOM y canvas
-├── style.css       # Estilos del juego (dark theme)
-├── game.js         # Toda la lógica del Tetris (~300 líneas)
+├── index.html            # Estructura del DOM y canvas
+├── style.css             # Estilos del juego (tema oscuro y claro)
+├── src/                  # Motor del juego, en módulos ES
+│   ├── config.js
+│   ├── state.js
+│   ├── events.js
+│   ├── board.js
+│   ├── pieces.js
+│   ├── scoring.js
+│   ├── render.js
+│   ├── hud.js
+│   ├── theme.js
+│   ├── actions.js
+│   ├── input.js
+│   ├── main.js           # Punto de entrada
+│   └── features/         # Una mejora del roadmap por archivo
+├── docs/upgrades/        # Roadmap: arquitectura y specs por mejora
 └── README.md
 ```
 
 ---
 
+## Roadmap de mejoras
+
+Hay seis mejoras planificadas —power-ups, piezas no estándar, combos y
+multiplicadores, modo desafío, habilidades cargables y sistema de hold—, cada una
+con su especificación en [`docs/upgrades/`](docs/upgrades/README.md).
+
+Se desarrollan en subramas que nacen de `feature/upgrades` (la rama padre del
+roadmap) y vuelven a ella por Pull Request. El motor se dividió en módulos
+precisamente para que esas ramas puedan avanzar en paralelo: cada mejora se
+engancha al juego desde `src/features/` usando puntos de extensión (eventos,
+teclas, capas de dibujado, modificadores de puntuación) en vez de editar el
+núcleo.
+
+Antes de empezar una mejora, lee
+[`docs/upgrades/ARQUITECTURA.md`](docs/upgrades/ARQUITECTURA.md).
+
+---
+
 ## Personalización
 
-Algunos parámetros fáciles de tunear en `game.js`:
+Algunos parámetros fáciles de tunear en `src/config.js`:
 
 | Constante      | Significado                              | Por defecto           |
 | -------------- | ---------------------------------------- | --------------------- |
@@ -178,7 +220,7 @@ Algunos parámetros fáciles de tunear en `game.js`:
 | `BLOCK`        | Tamaño en píxeles de cada celda          | `30`                  |
 | `COLORS`       | Paleta de colores por tipo de pieza      | 7 colores             |
 | `LINE_SCORES`  | Puntos por 1, 2, 3 o 4 líneas eliminadas | `[0,100,300,500,800]` |
-| `dropInterval` | Velocidad inicial de caída en ms         | `1000`                |
+| `BASE_DROP_INTERVAL` | Velocidad inicial de caída en ms   | `1000`                |
 
 > Si cambias `COLS`, `ROWS` o `BLOCK`, recuerda ajustar también `width` y `height` del `<canvas id="board">` en `index.html` para que coincida (`COLS × BLOCK` × `ROWS × BLOCK`).
 
@@ -199,7 +241,7 @@ Los tres se autentican con el secret `CLAUDE_CODE_OAUTH_TOKEN` del repositorio.
 ### Flujo de trabajo típico
 
 1. Alguien abre un issue describiendo un bug o una mejora.
-2. **`claude-issue-triage.yml`** lee el issue y el código, le pone labels del catálogo y deja un comentario con: _Resumen_, _Causa probable_, _Código implicado_ (con referencias tipo `game.js:243`), _Enfoque sugerido_, _Cómo reproducir_ y _Confianza_. Si el issue es vago, lo marca `needs-info` y pregunta lo que falta.
+2. **`claude-issue-triage.yml`** lee el issue y el código, le pone labels del catálogo y deja un comentario con: _Resumen_, _Causa probable_, _Código implicado_ (con referencias tipo `src/main.js:24`), _Enfoque sugerido_, _Cómo reproducir_ y _Confianza_. Si el issue es vago, lo marca `needs-info` y pregunta lo que falta.
    - Es un comentario **único**: al editar el issue se actualiza en vez de duplicarse.
    - Este workflow **no** escribe código ni abre PRs.
 3. Con el diagnóstico ya sobre la mesa, comentas **`@claude implementa el arreglo propuesto`** en el issue y `claude.yml` crea la rama y el PR.
@@ -209,7 +251,7 @@ Los tres se autentican con el secret `CLAUDE_CODE_OAUTH_TOKEN` del repositorio.
 
 ### Labels
 
-El catálogo vive en [`.github/labels.yml`](.github/labels.yml) y es una **lista cerrada**: el triage solo elige de ahí, nunca crea labels nuevos. Se agrupa en tipo (`bug`, `enhancement`, `documentation`, `refactor`, `question`), área (`gameplay`, `ui`, `controls`, `scoring`, `rendering`, `performance`), prioridad (`prioridad-alta/media/baja`) y meta (`needs-info`, `good-first-issue`).
+El catálogo vive en [`.github/labels.yml`](.github/labels.yml) y es una **lista cerrada**: el triage solo elige de ahí, nunca crea labels nuevos. Se agrupa en tipo (`bug`, `enhancement`, `documentation`, `refactor`, `question`), área (`gameplay`, `ui`, `controls`, `scoring`, `rendering`, `performance`), prioridad (`prioridad-alta/media/baja`) y meta (`needs-info`, `good-first-issue`, `roadmap`).
 
 Para aplicarlos en GitHub, lanza el workflow **Sync labels** desde la pestaña _Actions_, o en local:
 
