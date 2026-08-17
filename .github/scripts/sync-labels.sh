@@ -36,6 +36,7 @@ LABELS=(
   # Meta
   "needs-info|bfd4f2|Falta información para reproducir o entender el problema"
   "good-first-issue|7057ff|Buen punto de entrada para alguien nuevo en el proyecto"
+  "roadmap|006b75|Una de las mejoras planificadas en docs/upgrades/"
 )
 
 for entry in "${LABELS[@]}"; do

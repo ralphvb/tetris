@@ -79,3 +79,7 @@
 - name: good-first-issue
   color: 7057ff
   description: Buen punto de entrada para alguien nuevo en el proyecto
+
+- name: roadmap
+  color: 006b75
+  description: Una de las mejoras planificadas en docs/upgrades/

@@ -58,7 +58,7 @@ jobs:
           prompt: |
             Eres el triador de issues del repositorio ${{ github.repository }}: un
             Tetris en JavaScript vanilla (HTML5 Canvas), sin build, sin bundler y
-            sin tests. Toda la lógica vive en `game.js` (~300 líneas); la vista en
+            sin tests. La lógica vive en los módulos ES de `src/`; la vista en
             `index.html` y `style.css`. Lee `CLAUDE.md` del checkout antes de
             empezar: describe la arquitectura y las convenciones del proyecto.
 
@@ -72,9 +72,9 @@ jobs:
             Lee el issue con:
                 gh issue view ${{ github.event.issue.number }} --json title,body,labels,comments
 
-            Después LEE EL CÓDIGO relevante antes de opinar (`game.js`,
-            `index.html`, `style.css`). Un diagnóstico sin haber abierto los
-            archivos no sirve.
+            Después LEE EL CÓDIGO relevante antes de opinar (los módulos de
+            `src/`, `index.html`, `style.css`). Un diagnóstico sin haber abierto
+            los archivos no sirve.
 
             ## 2. Asignar labels
 
@@ -84,13 +84,13 @@ jobs:
             - Tipo (elige 1): `bug`, `enhancement`, `documentation`, `refactor`, `question`
             - Área (elige 1 o 2): `gameplay`, `ui`, `controls`, `scoring`, `rendering`, `performance`
             - Prioridad (elige 1): `prioridad-alta` (rompe el juego), `prioridad-media` (molesto, hay alternativa), `prioridad-baja` (detalle menor)
-            - Meta (opcional): `needs-info` si no hay pasos de reproducción claros; `good-first-issue` si el arreglo es pequeño y localizado
+            - Meta (opcional): `needs-info` si no hay pasos de reproducción claros; `good-first-issue` si el arreglo es pequeño y localizado; `roadmap` si el issue corresponde a una de las mejoras de `docs/upgrades/`
 
-            Guía de áreas: `gameplay` → `loop()`, `lockPiece()`, `collide()`,
-            `tryRotate()`; `rendering` → `draw()`, `drawBlock()`, ghost y vista
-            previa; `controls` → los handlers de teclado; `scoring` →
-            `LINE_SCORES`, nivel y `dropInterval`; `ui` → `index.html` y
-            `style.css`.
+            Guía de áreas: `gameplay` → `src/actions.js`, `src/board.js`,
+            `src/pieces.js` y el bucle de `src/main.js`; `rendering` →
+            `src/render.js` (draw, drawBlock, ghost, vista previa); `controls` →
+            `src/input.js`; `scoring` → `src/scoring.js` y `src/config.js`;
+            `ui` → `index.html`, `style.css` y `src/hud.js`.
 
             Aplícalos con:
                 gh issue edit ${{ github.event.issue.number }} --add-label "label1,label2"
@@ -130,9 +130,9 @@ jobs:
             funcional, NO una guía de implementación. En el comentario publicado
             NO incluyas:
 
-            - nombres de archivos ni rutas (`game.js`, `index.html`, `style.css`)
+            - nombres de archivos ni rutas (`src/main.js`, `index.html`, `style.css`)
             - nombres de funciones, variables o constantes del proyecto
-            - números de línea ni referencias del tipo `game.js:243`
+            - números de línea ni referencias del tipo `src/main.js:24`
             - fragmentos de código, diffs, pseudocódigo o bloques ``` con código
             - instrucciones sobre qué modificar o cómo implementar el arreglo
 
