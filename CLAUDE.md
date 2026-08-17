@@ -44,7 +44,7 @@ Three workflows in `.github/workflows/`, all authenticated with the `CLAUDE_CODE
 
 - `claude-issue-triage.yml` — on `issues: [opened, edited]`. Labels the issue and posts a single sticky diagnosis comment (marker `<!-- claude-triage -->`) in Spanish. Read-only on the repo; it never writes code or opens PRs. Skips issues from bots and issues mentioning `@claude` (those go to `claude.yml`).
 - `claude.yml` — responds to `@claude` mentions; this is the one that writes the fix and opens the PR.
-- `claude-code-review.yml` — reviews PRs.
+- `claude-code-review.yml` — reviews PRs with the `code-review` plugin. Runs with `pull-requests: write` (the plugin posts its verdict via `gh pr comment`), `fetch-depth: 0` (it reads `git blame`/`git log` of the modified files) and an explicit `--allowed-tools` list — the plugin's own list omits `git`/`gh api`, which its history and past-PR agents need. Skipped when the head branch is `feature/upgrades`: that PR only regroups code already reviewed in each `upgrade/NN-*` PR.
 
 Intended flow: issue → triage diagnosis → `@claude` comment → PR → review.
 

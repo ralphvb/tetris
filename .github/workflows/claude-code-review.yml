@@ -12,16 +12,16 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    # `feature/upgrades` es la rama padre del roadmap: su PR hacia `main` solo reagrupa
+    # código que ya se revisó en cada PR `upgrade/NN-*`. Revisarlo de nuevo es un diff
+    # enorme, caro y redundante, así que se salta.
+    if: github.head_ref != 'feature/upgrades'
 
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      # `write` porque el plugin publica su veredicto con `gh pr comment`.
+      pull-requests: write
       issues: read
       id-token: write
 
@@ -29,7 +29,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          # Historial completo: el plugin revisa `git blame` / `git log` de los
+          # archivos modificados, imposible con un clon shallow.
+          fetch-depth: 0
 
       - name: Run Claude Code Review
         id: claude-review
@@ -39,6 +41,12 @@ jobs:
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
           prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          # `--allowed-tools` reemplaza el set por defecto, por eso la lista repite los
+          # `Bash(gh pr …)` que el plugin ya declaraba. `Task` es imprescindible: el
+          # plugin lanza agentes en paralelo. `--max-turns` acota el gasto.
+          claude_args: >-
+            --allowed-tools "Read,Glob,Grep,Task,Bash(git log:*),Bash(git blame:*),Bash(git show:*),Bash(git diff:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(gh search:*),Bash(gh issue view:*),Bash(gh issue list:*)"
+            --max-turns 40
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
